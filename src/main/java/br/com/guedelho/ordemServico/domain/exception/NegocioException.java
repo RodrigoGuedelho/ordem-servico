@@ -26,6 +26,5 @@ public  class NegocioException extends Exception {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	
-	
+
 }

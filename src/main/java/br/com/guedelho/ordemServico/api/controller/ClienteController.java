@@ -2,9 +2,6 @@ package br.com.guedelho.ordemServico.api.controller;
 
 import java.util.List;
 import java.util.Optional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;

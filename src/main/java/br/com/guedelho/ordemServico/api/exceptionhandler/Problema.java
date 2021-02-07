@@ -3,8 +3,6 @@ package br.com.guedelho.ordemServico.api.exceptionhandler;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.apache.catalina.authenticator.DigestAuthenticator;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
