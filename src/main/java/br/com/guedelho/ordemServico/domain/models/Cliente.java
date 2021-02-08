@@ -10,13 +10,17 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import br.com.guedelho.ordemServico.domain.ValidationGroups;
 
 @Entity
 @Table(name = "cliente")
 public class Cliente implements Serializable{
 
 	private static final long serialVersionUID = 1L;
+	@NotNull(groups = ValidationGroups.ClienteId.class)
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;

@@ -1,6 +1,6 @@
 package br.com.guedelho.ordemServico.domain.service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,11 @@ public class GestaoOrdemServicoService {
 	private OrdemServicoRepository ordemServicoRepository;
 
 	public OrdemServico salvar(OrdemServico ordemServico) {
-		ordemServico.setStatus(StatusOrdemServico.ABERTO);
-		ordemServico.setDataAbertura(LocalDateTime.now());
+
+		if (ordemServico.getId() == null) {
+			ordemServico.setStatus(StatusOrdemServico.ABERTO);
+			ordemServico.setDataAbertura(OffsetDateTime.now());
+		}
 
 		return ordemServicoRepository.save(ordemServico);
 	}
