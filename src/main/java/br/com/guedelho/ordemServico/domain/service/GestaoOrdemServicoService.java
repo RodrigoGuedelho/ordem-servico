@@ -14,14 +14,10 @@ public class GestaoOrdemServicoService {
 
 	@Autowired
 	private OrdemServicoRepository ordemServicoRepository;
-
+	
 	public OrdemServico salvar(OrdemServico ordemServico) {
-
-		if (ordemServico.getId() == null) {
-			ordemServico.setStatus(StatusOrdemServico.ABERTO);
-			ordemServico.setDataAbertura(OffsetDateTime.now());
-		}
-
+		ordemServico.setStatus(StatusOrdemServico.ABERTO);
+		ordemServico.setDataAbertura(OffsetDateTime.now());
 		return ordemServicoRepository.save(ordemServico);
 	}
 

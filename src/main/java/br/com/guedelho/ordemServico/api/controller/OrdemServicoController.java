@@ -1,10 +1,12 @@
 package br.com.guedelho.ordemServico.api.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.guedelho.ordemServico.api.exceptionhandler.Problema;
+import br.com.guedelho.ordemServico.api.model.OrdemServicoInput;
+import br.com.guedelho.ordemServico.api.model.OrdemServicoModel;
 import br.com.guedelho.ordemServico.domain.models.Cliente;
 import br.com.guedelho.ordemServico.domain.models.OrdemServico;
 import br.com.guedelho.ordemServico.domain.repository.ClienteRepository;
@@ -35,13 +39,16 @@ public class OrdemServicoController {
 	private ClienteRepository ClienteRepository;
 	@Autowired
 	private OrdemServicoRepository ordemServicoRepository;
+	@Autowired
+	private ModelMapper modelMapper;
 	
 	@PostMapping("/ordens-servico")
-	public  ResponseEntity<Object> salvar(@Valid @RequestBody OrdemServico ordemServico) {
+	public  ResponseEntity<Object> salvar(@Valid @RequestBody OrdemServicoInput ordemServico) {
 		Cliente cliente = ClienteRepository.findById(ordemServico.getCliente().getId()).orElse(null);
-		if (ordemServico.getCliente() != null &&  cliente != null) {
-			ordemServico.setCliente(cliente);
-			return ResponseEntity.status(201).body(gestaoOrdemServicoService.salvar(ordemServico));
+		OrdemServico ordemS = toEntity(ordemServico);
+		if (ordemS.getCliente() != null &&  cliente != null) {
+			ordemS.setCliente(cliente);
+			return ResponseEntity.status(201).body(toModel(gestaoOrdemServicoService.salvar(ordemS)));
 		}
 		
 		Problema  problema = new Problema(400, "Cliente não encontrado.");
@@ -50,16 +57,16 @@ public class OrdemServicoController {
 	}
 	
 	@GetMapping("/ordens-servico")
-	public List<OrdemServico> findAll() {
-		return ordemServicoRepository.findAll();
+	public List<OrdemServicoModel> findAll() {
+		return toCollectionModel(ordemServicoRepository.findAll());
 	}
 	
 	@GetMapping("/ordens-servico/{id}")
-	public  ResponseEntity<OrdemServico> findById(@PathVariable(value = "id") Long id) {
+	public  ResponseEntity<OrdemServicoModel> findById(@PathVariable(value = "id") Long id) {
 		Optional<OrdemServico>  ordemServico = ordemServicoRepository.findById(id);
 		
 		if (ordemServico.isPresent()) {
-			return ResponseEntity.ok(ordemServico.get());
+			return ResponseEntity.ok(toModel(ordemServico.get()));
 		}
 		
 		return ResponseEntity.notFound().build();
@@ -77,14 +84,33 @@ public class OrdemServicoController {
 	}
 	
 	@PutMapping("/ordens-servico/{id}")
-	public ResponseEntity<OrdemServico> editar(@Valid @PathVariable Long id, @RequestBody OrdemServico ordemServico) {
+	public ResponseEntity<OrdemServicoModel> editar(@Valid @PathVariable Long id, @RequestBody OrdemServicoInput ordemServicoInput) {
 		
 		if (ordemServicoRepository.existsById(id)) {
+			OrdemServico ordemServico = toEntity(ordemServicoInput);
 			ordemServico.setId(id);
-			return ResponseEntity.ok(gestaoOrdemServicoService.salvar(ordemServico));
+			return ResponseEntity.ok(toModel(gestaoOrdemServicoService.salvar(ordemServico)));
 		}
 		
 		return ResponseEntity.notFound().build();
+	}
+	
+	private OrdemServicoModel toModel(OrdemServico ordemServico) {
+		return modelMapper.map(ordemServico, OrdemServicoModel.class);
+	}
+	
+	private List<OrdemServicoModel> toCollectionModel(List<OrdemServico> ordensServico) {
+		List<OrdemServicoModel> ordemServicoModels = new ArrayList<>();
+		
+		for (OrdemServico ordemServico : ordensServico) {
+			ordemServicoModels.add(toModel(ordemServico));
+		}
+		
+		return ordemServicoModels;
+	}
+	
+	private OrdemServico toEntity(OrdemServicoInput ordemServicoInput) {
+		return modelMapper.map(ordemServicoInput, OrdemServico.class);
 	}
 	
 }
