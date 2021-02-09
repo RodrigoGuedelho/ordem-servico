@@ -56,6 +56,11 @@ public class ClienteController {
 		}
 		return ResponseEntity.notFound().build();
 	}
+	
+	@GetMapping("/clientes/filtros/{nome}/{email}/{telefone}")
+	public List<Cliente> findFiltros(@PathVariable String nome, @PathVariable String email, @PathVariable String telefone) {
+		return clienteRepository.find(nome, email, telefone);
+	}
 
 	@PostMapping("/clientes")
 	@ResponseStatus(value = HttpStatus.CREATED)
