@@ -3,6 +3,8 @@ package br.com.guedelho.ordemServico.domain.models;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -24,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import br.com.guedelho.ordemServico.domain.ValidationGroups;
+import br.com.guedelho.ordemServico.domain.exception.NegocioException;
 
 @Entity
 @Table(name = "ordem_servico")
@@ -52,7 +56,17 @@ public class OrdemServico implements Serializable {
 	@Column(name = "data_finalizacao")
 	@JsonProperty(access = Access.READ_ONLY)
 	private OffsetDateTime dataFinalizacao;
+	@OneToMany(mappedBy = "ordemServico")
+	private List<Comentario> comentarios = new ArrayList<>();
 	
+	
+	public void finalizar() throws NegocioException {
+		if (!StatusOrdemServico.ABERTO.equals(this.getStatus()))  {
+			throw new NegocioException("Ordem de servico está cancelada ou finalizada.");	
+		}
+		this.setDataFinalizacao(OffsetDateTime.now());
+		this.setStatus(StatusOrdemServico.FINALIZADA);
+	}
 	public Long getId() {
 		return id;
 	}
@@ -102,6 +116,12 @@ public class OrdemServico implements Serializable {
 	}
 	public void setDataAbertura(OffsetDateTime dataAbertura) {
 		this.dataAbertura = dataAbertura;
+	}
+	public List<Comentario> getComentarios() {
+		return comentarios;
+	}
+	public void setComentarios(List<Comentario> comentarios) {
+		this.comentarios = comentarios;
 	}
 	
 	@Override

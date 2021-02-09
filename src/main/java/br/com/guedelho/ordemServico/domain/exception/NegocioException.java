@@ -14,6 +14,14 @@ public  class NegocioException extends Exception {
 		this.mensagem = mensagem;
 		this.status = 400;
 	}
+	
+	public NegocioException(String mensagem, Integer status) {
+		super();
+		this.mensagem = mensagem;
+		this.status = status;
+	}
+
+
 	public String getMensagem() {
 		return mensagem;
 	}
