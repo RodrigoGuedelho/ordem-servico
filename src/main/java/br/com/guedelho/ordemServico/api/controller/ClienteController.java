@@ -41,9 +41,9 @@ public class ClienteController {
 	}
 
 	@GetMapping("/clientes/nome/{nome}")
-	public List<Cliente> listarPorNome(@PathVariable(value = "nome") Optional<String> nome) {
+	public List<Cliente> listarPorNome(@PathVariable(value = "nome") String nome) {
 
-		return clienteRepository.findByNome(nome);
+		return clienteRepository.findByNome(nome.toLowerCase());
 	}
 
 	@GetMapping("/clientes/{id}")
