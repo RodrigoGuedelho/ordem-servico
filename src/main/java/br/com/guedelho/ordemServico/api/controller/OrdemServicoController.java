@@ -25,6 +25,7 @@ import br.com.guedelho.ordemServico.api.model.OrdemServicoModel;
 import br.com.guedelho.ordemServico.domain.exception.NegocioException;
 import br.com.guedelho.ordemServico.domain.models.Cliente;
 import br.com.guedelho.ordemServico.domain.models.OrdemServico;
+import br.com.guedelho.ordemServico.domain.models.StatusOrdemServico;
 import br.com.guedelho.ordemServico.domain.repository.ClienteRepository;
 import br.com.guedelho.ordemServico.domain.repository.OrdemServicoRepository;
 import br.com.guedelho.ordemServico.domain.service.GestaoOrdemServicoService;
@@ -61,6 +62,31 @@ public class OrdemServicoController {
 	@GetMapping("/ordens-servico")
 	public List<OrdemServicoModel> findAll() {
 		return toCollectionModel(ordemServicoRepository.findAll());
+	}
+	
+	@GetMapping("/ordens-servico/filtros/{status}/{descricao}/{clienteId}")
+	public List<OrdemServicoModel> find(@PathVariable(value = "status") StatusOrdemServico status,  @PathVariable(value = "descricao") String  descricao, 
+			@PathVariable(value = "clienteId") Long clienteId) {
+	
+		return toCollectionModel(ordemServicoRepository.find(status, descricao.toLowerCase(), clienteId));
+	}
+	
+	@GetMapping("/ordens-servico/filtros/{status}/{descricao}/")
+	public List<OrdemServicoModel> find(@PathVariable(value = "status") StatusOrdemServico status,  @PathVariable(value = "descricao") String  descricao) {	
+		return toCollectionModel(ordemServicoRepository.find(status, descricao.toLowerCase()));
+	}
+	
+	@GetMapping("/ordens-servico/filtros/{status}/cliente-id/{clienteId}")
+	public List<OrdemServicoModel> find(@PathVariable(value = "status") StatusOrdemServico status, 
+			@PathVariable(value = "clienteId") Long clienteId) {
+	
+		return toCollectionModel(ordemServicoRepository.find(status, clienteId));
+	}
+	
+	@GetMapping("/ordens-servico/filtros/{status}")
+	public List<OrdemServicoModel> find(@PathVariable(value = "status") StatusOrdemServico status) {
+	
+		return toCollectionModel(ordemServicoRepository.find(status));
 	}
 	
 	@GetMapping("/ordens-servico/{id}")
